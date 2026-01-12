@@ -15,3 +15,10 @@ Route::middleware([
         return view('dashboard');
     })->name('dashboard');
 });
+
+use App\Models\Perfume; // testing
+
+Route::get('/test-perfumes', function () {
+    return Perfume::select('id','name','brand','price','stock')->get();
+});
+
