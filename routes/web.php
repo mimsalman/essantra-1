@@ -1,24 +1,38 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\PerfumeController;
+use App\Http\Controllers\ShopController;
+use App\Models\Perfume;
+use App\Http\Controllers\ReviewController;
 
 Route::get('/', function () {
-    return view('welcome');
-});
+    $featured = Perfume::where('is_featured', true)
+        ->latest()
+        ->take(6)
+        ->get();
 
-Route::middleware([
-    'auth:sanctum',
-    config('jetstream.auth_session'),
-    'verified',
-])->group(function () {
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
-});
+    return view('welcome', compact('featured'));
+})->name('home');
 
-use App\Models\Perfume; // testing
 
-Route::get('/test-perfumes', function () {
-    return Perfume::select('id','name','brand','price','stock')->get();
+// ✅ Public shop routes (controller)
+Route::get('/shop', [ShopController::class, 'index'])->name('shop.index');
+Route::get('/shop/{perfume}', [ShopController::class, 'show'])->name('shop.show');
+
+// ✅ Admin CRUD routes (protected)
+Route::middleware(['auth', 'admin'])
+    ->prefix('admin')
+    ->name('admin.')
+    ->group(function () {
+        Route::resource('perfumes', PerfumeController::class);
+    });
+
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth'])->name('dashboard');
+
+Route::middleware('auth')->group(function () {
+    Route::post('/shop/{perfume}/reviews', [ReviewController::class, 'store'])->name('reviews.store');
 });
 

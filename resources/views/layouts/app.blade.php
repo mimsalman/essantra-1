@@ -1,45 +1,49 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="csrf-token" content="{{ csrf_token() }}">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ config('app.name', 'Essantra') }}</title>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+</head>
+<body class="bg-gray-50 text-gray-900">
+    <nav class="bg-white border-b">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+            <a href="{{ route('home') }}" class="font-bold text-xl">Essantra</a>
 
-        <title>{{ config('app.name', 'Laravel') }}</title>
+            <div class="flex items-center gap-4">
+                <a href="{{ route('shop.index') }}" class="text-gray-700 hover:text-black">Shop</a>
 
-        <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+                @auth
+                    <a href="{{ url('/dashboard') }}" class="text-gray-700 hover:text-black">Dashboard</a>
 
-        <!-- Scripts -->
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
+                    @if(auth()->check() && auth()->user()->role === 'admin')
+                        <a href="{{ route('admin.perfumes.index') }}" class="hover:text-rose-600">Admin</a>
+                    @endif
 
-        <!-- Styles -->
-        @livewireStyles
-    </head>
-    <body class="font-sans antialiased">
-        <x-banner />
+                @endauth
 
-        <div class="min-h-screen bg-gray-100">
-            @livewire('navigation-menu')
-
-            <!-- Page Heading -->
-            @if (isset($header))
-                <header class="bg-white shadow">
-                    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                        {{ $header }}
-                    </div>
-                </header>
-            @endif
-
-            <!-- Page Content -->
-            <main>
-                {{ $slot }}
-            </main>
+                @guest
+                    <a href="{{ route('login') }}" class="px-4 py-2 rounded-lg bg-black text-white hover:bg-gray-800">Login</a>
+                @endguest
+            </div>
         </div>
+    </nav>
 
-        @stack('modals')
+    <main class="max-w-7xl mx-auto px-4 py-8">
+        @if(session('success'))
+            <div class="mb-6 rounded-lg bg-green-50 border border-green-200 text-green-800 px-4 py-3">
+                {{ session('success') }}
+            </div>
+        @endif
 
-        @livewireScripts
-    </body>
+        @yield('content')
+    </main>
+
+    <footer class="border-t bg-white">
+        <div class="max-w-7xl mx-auto px-4 py-6 text-sm text-gray-500">
+            © {{ date('Y') }} Essantra. All rights reserved.
+        </div>
+    </footer>
+</body>
 </html>
