@@ -21,29 +21,31 @@ class PerfumeController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
+        $data = $request->validate([
             'name' => ['required','string','max:255'],
-            'brand' => ['required','string','max:255'],
+            'brand' => ['nullable','string','max:255'],
+            'category' => ['nullable','string','max:255'],
             'price' => ['required','numeric','min:0'],
             'stock' => ['required','integer','min:0'],
             'description' => ['nullable','string'],
-            'image' => ['nullable','image','mimes:jpg,jpeg,png,webp','max:2048'],
-            'gender' => ['required','in:men,women,unisex'],
             'is_featured' => ['nullable','boolean'],
-
+            'image' => ['nullable','image','max:2048'],
         ]);
 
-        $validated['is_featured'] = $request->boolean('is_featured');
-
+        $data['is_featured'] = $request->boolean('is_featured');
 
         if ($request->hasFile('image')) {
-            $path = $request->file('image')->store('perfumes', 'public');
-            $validated['image_path'] = $path;
+            $data['image'] = $request->file('image')->store('perfumes', 'public');
         }
 
-        Perfume::create($validated);
+        Perfume::create($data);
 
-        return redirect()->route('admin.perfumes.index')->with('success', 'Perfume created successfully!');
+        return redirect()->route('admin.perfumes.index')->with('success', 'Perfume created successfully.');
+    }
+
+    public function show(Perfume $perfume)
+    {
+        return view('admin.perfumes.show', compact('perfume'));
     }
 
     public function edit(Perfume $perfume)
@@ -53,40 +55,39 @@ class PerfumeController extends Controller
 
     public function update(Request $request, Perfume $perfume)
     {
-        $validated = $request->validate([
+        $data = $request->validate([
             'name' => ['required','string','max:255'],
-            'brand' => ['required','string','max:255'],
-            'gender' => ['required','in:men,women,unisex'],
+            'brand' => ['nullable','string','max:255'],
+            'category' => ['nullable','string','max:255'],
             'price' => ['required','numeric','min:0'],
             'stock' => ['required','integer','min:0'],
             'description' => ['nullable','string'],
-            'image' => ['nullable','image','mimes:jpg,jpeg,png,webp','max:2048'],
             'is_featured' => ['nullable','boolean'],
+            'image' => ['nullable','image','max:2048'],
         ]);
 
-        $validated['is_featured'] = $request->boolean('is_featured');
+        $data['is_featured'] = $request->boolean('is_featured');
 
         if ($request->hasFile('image')) {
-            if ($perfume->image_path) {
-                Storage::disk('public')->delete($perfume->image_path);
+            if ($perfume->image) {
+                Storage::disk('public')->delete($perfume->image);
             }
-            $path = $request->file('image')->store('perfumes', 'public');
-            $validated['image_path'] = $path;
+            $data['image'] = $request->file('image')->store('perfumes', 'public');
         }
 
-        $perfume->update($validated);
+        $perfume->update($data);
 
-        return redirect()->route('admin.perfumes.index')->with('success', 'Perfume updated successfully!');
+        return redirect()->route('admin.perfumes.index')->with('success', 'Perfume updated successfully.');
     }
 
     public function destroy(Perfume $perfume)
     {
-        if ($perfume->image_path) {
-            Storage::disk('public')->delete($perfume->image_path);
+        if ($perfume->image) {
+            Storage::disk('public')->delete($perfume->image);
         }
 
         $perfume->delete();
 
-        return redirect()->route('admin.perfumes.index')->with('success', 'Perfume deleted successfully!');
+        return redirect()->route('admin.perfumes.index')->with('success', 'Perfume deleted successfully.');
     }
 }

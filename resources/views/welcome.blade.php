@@ -1,86 +1,166 @@
-@extends('layouts.store')
+@extends('layouts.app')
 
 @section('title', 'Home')
 
 @section('content')
-    <section class="grid lg:grid-cols-2 gap-10 items-center">
-        <div>
-            <p class="text-sm font-semibold tracking-widest text-rose-600">PREMIUM PERFUME STORE</p>
-            <h1 class="mt-3 text-4xl sm:text-5xl font-bold tracking-tight">
-                Find your signature scent
-            </h1>
-            <p class="mt-4 text-gray-600 leading-relaxed">
-                Explore luxury fragrances from top brands. Long-lasting scents, authentic products, and secure checkout.
-            </p>
 
-            <div class="mt-6 flex gap-3">
-                <a href="{{ route('shop.index') }}"
-                   class="px-5 py-3 rounded-lg bg-rose-600 text-white font-semibold hover:bg-rose-700">
-                    Shop Perfumes
-                </a>
-                <a href="#best-sellers"
-                   class="px-5 py-3 rounded-lg border bg-white font-semibold hover:bg-gray-50">
-                    Best Sellers
-                </a>
-            </div>
+<!-- HERO -->
+<section class="relative border rounded-2xl shadow-sm overflow-hidden">
 
-            <div class="mt-8 grid sm:grid-cols-3 gap-4">
-                <div class="p-4 rounded-xl bg-white border">
-                    <p class="font-semibold">Authentic</p>
-                    <p class="text-sm text-gray-600">100% genuine</p>
-                </div>
-                <div class="p-4 rounded-xl bg-white border">
-                    <p class="font-semibold">Fast Delivery</p>
-                    <p class="text-sm text-gray-600">Islandwide</p>
-                </div>
-                <div class="p-4 rounded-xl bg-white border">
-                    <p class="font-semibold">Secure</p>
-                    <p class="text-sm text-gray-600">Safe payments</p>
-                </div>
-            </div>
-        </div>
+    <!-- Background Image -->
+    <div class="absolute inset-0">
+        <img src="{{ asset('images/perfume-bg2.jpg') }}"
+             class="w-full h-full object-cover"
+             alt="Perfume Background">
+    </div>
 
-        {{-- Hero image block (placeholder) --}}
-        <div class="relative">
-            <div class="rounded-3xl bg-gradient-to-br from-rose-100 via-white to-amber-100 border p-10">
-                <div class="aspect-[4/3] rounded-2xl bg-white border flex items-center justify-center text-gray-500">
-                    Hero Image (add later)
-                </div>
-                <p class="mt-4 text-sm text-gray-600">
-                    Tip: later we’ll replace this with real product images from DB.
+    <!-- Dark overlay for readability -->
+    <div class="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-black/10"></div>
+
+    <!-- Content -->
+    <div class="relative p-8 lg:p-10">
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8">
+
+            <!-- LEFT CONTENT -->
+            <div class="max-w-2xl text-white">
+                <p class="text-sm font-semibold text-white/70 tracking-wide uppercase">
+                    Essantra Collection
                 </p>
-            </div>
-        </div>
-    </section>
 
-    <section id="best-sellers" class="mt-14">
-        <div class="flex items-end justify-between">
-            <div>
-                <h2 class="text-2xl font-bold">Best Sellers</h2>
-                <p class="text-gray-600">Our most popular picks this week.</p>
-            </div>
-            <a href="{{ route('shop.index') }}" class="text-sm font-semibold text-rose-600 hover:text-rose-700">
-                View all →
-            </a>
-        </div>
+                <h1 class="mt-2 text-4xl font-extrabold tracking-tight">
+                    Essantra Perfume Store
+                </h1>
 
-        {{-- Static cards for now (DB in Day 4) --}}
-        <div class="mt-6 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            @foreach($featured as $perfume)
-                <div class="bg-white border rounded-xl p-4">
-                    <img src="{{ asset('storage/' . $perfume->image_path) }}"
-                        class="h-48 w-full object-cover rounded-lg">
+                <p class="mt-3 text-white/80 leading-relaxed">
+                    Discover premium fragrances, explore trending scents, and share your experience with reviews.
+                </p>
 
-                    <h3 class="mt-3 font-bold">{{ $perfume->name }}</h3>
-                    <p class="text-sm text-gray-500">{{ ucfirst($perfume->gender) }}</p>
-                    <p class="mt-1 font-semibold">Rs. {{ number_format($perfume->price,2) }}</p>
-
-                    <a href="{{ route('shop.show', $perfume) }}"
-                    class="inline-block mt-3 text-sm font-semibold underline">
-                        View →
+                <div class="mt-6 flex flex-wrap gap-3">
+                    <a href="{{ route('shop.index') }}"
+                       class="bg-white text-gray-900 hover:bg-gray-100 font-semibold px-5 py-3 rounded-xl shadow">
+                        Visit Shop
                     </a>
+
+                    @auth
+                        <a href="{{ route('dashboard') }}"
+                           class="bg-white/10 border border-white/20 hover:bg-white/15 text-white font-semibold px-5 py-3 rounded-xl">
+                            User Dashboard
+                        </a>
+
+                        @if(auth()->user()->is_admin)
+                            <a href="{{ route('admin.dashboard') }}"
+                               class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-3 rounded-xl shadow">
+                                Admin Dashboard
+                            </a>
+                        @endif
+                    @else
+                        <a href="{{ route('login') }}"
+                           class="bg-white/10 border border-white/20 hover:bg-white/15 text-white font-semibold px-5 py-3 rounded-xl">
+                            Login
+                        </a>
+
+                        <a href="{{ route('register') }}"
+                           class="bg-white text-gray-900 hover:bg-gray-100 font-semibold px-5 py-3 rounded-xl shadow">
+                            Register
+                        </a>
+                    @endauth
                 </div>
+            </div>
+
+            <!-- RIGHT QUICK LINKS -->
+            <div class="w-full lg:w-[420px]">
+                <div class="bg-white/10 border border-white/20 backdrop-blur-xl rounded-2xl p-6 shadow-lg">
+                    <p class="font-semibold text-white mb-3">Quick Links</p>
+
+                    <div class="space-y-2">
+                        <a href="{{ route('shop.index') }}"
+                           class="block text-white/90 hover:text-white underline">
+                            Browse all perfumes
+                        </a>
+
+                        <a href="{{ route('register') }}"
+                           class="block text-white/90 hover:text-white underline">
+                            Create an account
+                        </a>
+                    </div>
+
+                    <p class="text-xs text-white/70 mt-4">
+                        Tip: Login to review perfumes and track your activity.
+                    </p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</section>
+
+
+
+<!-- FEATURED -->
+<section class="mt-10">
+    <div class="flex items-center justify-between mb-4">
+        <h2 class="text-2xl font-bold">Featured Perfumes</h2>
+        <a href="{{ route('shop.index') }}" class="text-sm font-medium underline text-gray-700 hover:text-gray-900">
+            View all
+        </a>
+    </div>
+
+    @if(isset($featured) && $featured->count() > 0)
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            @foreach($featured as $perfume)
+                <a href="{{ route('shop.show', $perfume) }}"
+                   class="group bg-white border rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition">
+
+                    <div class="relative bg-gray-50 aspect-[4/3] overflow-hidden">
+                        @if($perfume->image)
+                            <img src="{{ asset('storage/'.$perfume->image) }}"
+                                 class="w-full h-full object-cover group-hover:scale-[1.03] transition duration-300" />
+                        @else
+                            <div class="w-full h-full flex items-center justify-center text-gray-400 text-sm">
+                                No Image
+                            </div>
+                        @endif
+
+                        <div class="absolute top-3 left-3">
+                            <span class="text-xs font-semibold px-3 py-1 rounded-full bg-yellow-100 text-yellow-800">
+                                Featured
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="p-5">
+                        <h3 class="text-lg font-bold group-hover:underline">
+                            {{ $perfume->name }}
+                        </h3>
+
+                        <p class="text-sm text-gray-600 mt-1">
+                            {{ $perfume->brand ?? '—' }}
+                            @if($perfume->category) • {{ $perfume->category }} @endif
+                        </p>
+
+                        <div class="mt-4 flex items-center justify-between">
+                            <p class="font-bold">LKR {{ number_format($perfume->price, 2) }}</p>
+
+                            @if($perfume->stock > 0)
+                                <span class="text-xs font-semibold px-2 py-1 rounded-full bg-green-100 text-green-700">
+                                    In Stock
+                                </span>
+                            @else
+                                <span class="text-xs font-semibold px-2 py-1 rounded-full bg-red-100 text-red-700">
+                                    Out of Stock
+                                </span>
+                            @endif
+                        </div>
+                    </div>
+                </a>
             @endforeach
         </div>
-    </section>
+    @else
+        <div class="bg-white border rounded-2xl p-8 text-center text-gray-600 shadow-sm">
+            No featured perfumes yet. Admin can mark perfumes as “Featured”.
+        </div>
+    @endif
+</section>
+
 @endsection

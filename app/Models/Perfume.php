@@ -10,18 +10,12 @@ class Perfume extends Model
     use HasFactory;
 
     protected $fillable = [
-        'name', 'brand', 'price', 'stock', 'description', 'image_path', 'gender', 'is_featured'
+        'name', 'brand', 'category', 'price', 'stock',
+        'image', 'description', 'is_featured'
     ];
-
-    public function orderItems()
-    {
-        return $this->hasMany(OrderItem::class);
-    }
 
     public function reviews()
     {
-        return $this->hasMany(\App\Models\Review::class);
+        return $this->hasMany(Review::class);
     }
-
 }
-
