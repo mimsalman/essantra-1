@@ -17,6 +17,9 @@ use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Admin\AdminOrderController;
 
+use App\Http\Controllers\TwoFactorSettingsController;
+use App\Http\Controllers\TwoFactorChallengeController;
+
 /*
 |--------------------------------------------------------------------------
 | LANDING PAGE
@@ -41,7 +44,7 @@ Route::get('/', function () {
 
 /*
 |--------------------------------------------------------------------------
-| PUBLIC SHOP
+| PUBLIC SHOP (NO LOGIN REQUIRED)
 |--------------------------------------------------------------------------
 */
 Route::get('/shop', [ShopController::class, 'index'])->name('shop.index');
@@ -50,22 +53,37 @@ Route::get('/shop/{perfume}', [ShopController::class, 'show'])->name('shop.show'
 
 /*
 |--------------------------------------------------------------------------
-| AUTH USER ROUTES
+| 2FA ROUTES (AUTH ONLY - IMPORTANT)
+| These routes MUST be accessible before OTP is verified
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth'])->group(function () {
+
+    // 2FA settings (dashboard buttons)
+    Route::post('/two-factor/enable', [TwoFactorSettingsController::class, 'enable'])->name('2fa.enable');
+    Route::post('/two-factor/disable', [TwoFactorSettingsController::class, 'disable'])->name('2fa.disable');
+
+    // 2FA challenge
+    Route::get('/two-factor/challenge', [TwoFactorChallengeController::class, 'show'])->name('2fa.challenge');
+    Route::post('/two-factor/send', [TwoFactorChallengeController::class, 'send'])->name('2fa.send');
+    Route::post('/two-factor/verify', [TwoFactorChallengeController::class, 'verify'])->name('2fa.verify');
+});
+
+
+/*
+|--------------------------------------------------------------------------
+| AUTH USER ROUTES (OTP REQUIRED IF ENABLED)
+|--------------------------------------------------------------------------
+*/
+Route::middleware(['auth', 'email2fa'])->group(function () {
 
     /*
     |--------------------------------------------------------------------------
     | PROFILE
     |--------------------------------------------------------------------------
     */
-    Route::post('/profile/photo', [ProfileController::class, 'updatePhoto'])
-        ->name('profile.photo');
-
-    // ✅ password route must be POST only (fix 405 errors)
-    Route::post('/profile/password', [ProfileController::class, 'updatePassword'])
-        ->name('profile.password');
+    Route::post('/profile/photo', [ProfileController::class, 'updatePhoto'])->name('profile.photo');
+    Route::post('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password');
 
 
     /*
@@ -104,11 +122,8 @@ Route::middleware(['auth'])->group(function () {
     | REVIEWS
     |--------------------------------------------------------------------------
     */
-    Route::post('/shop/{perfume}/reviews', [ReviewController::class, 'store'])
-        ->name('reviews.store');
-
-    Route::delete('/reviews/{review}', [ReviewController::class, 'destroy'])
-        ->name('reviews.destroy');
+    Route::post('/shop/{perfume}/reviews', [ReviewController::class, 'store'])->name('reviews.store');
+    Route::delete('/reviews/{review}', [ReviewController::class, 'destroy'])->name('reviews.destroy');
 
 
     /*
@@ -124,8 +139,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/cart/clear', [CartController::class, 'clear'])->name('cart.clear');
 
     // Buy Now
-    Route::post('/cart/buy-now/{perfume}', [CartController::class, 'buyNow'])
-        ->name('cart.buyNow');
+    Route::post('/cart/buy-now/{perfume}', [CartController::class, 'buyNow'])->name('cart.buyNow');
 
 
     /*
@@ -135,60 +149,50 @@ Route::middleware(['auth'])->group(function () {
     */
     Route::get('/checkout', [OrderController::class, 'checkout'])->name('orders.checkout');
     Route::post('/orders/place', [OrderController::class, 'place'])->name('orders.place');
-
     Route::get('/my-orders', [OrderController::class, 'myOrders'])->name('orders.my');
 });
 
 
 /*
 |--------------------------------------------------------------------------
-| ADMIN ROUTES (ADMIN ONLY)
+| ADMIN ROUTES (OTP REQUIRED IF ENABLED)
 |--------------------------------------------------------------------------
 */
-Route::middleware(['auth', 'admin'])
+Route::middleware(['auth', 'admin', 'email2fa'])
     ->prefix('admin')
     ->name('admin.')
     ->group(function () {
 
-        /*
-        |--------------------------------------------------------------------------
-        | ADMIN DASHBOARD
-        |--------------------------------------------------------------------------
-        */
-        Route::get('/dashboard', [AdminDashboardController::class, 'index'])
-            ->name('dashboard');
+        // Admin dashboard
+        Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
 
-        /*
-        |--------------------------------------------------------------------------
-        | ADMIN PERFUMES (CRUD)
-        |--------------------------------------------------------------------------
-        */
+        // Admin perfumes CRUD
         Route::resource('perfumes', PerfumeController::class);
 
-        /*
-        |--------------------------------------------------------------------------
-        | ADMIN USERS
-        |--------------------------------------------------------------------------
-        */
+        // Admin users
         Route::get('/users', [AdminUserController::class, 'index'])->name('users.index');
         Route::post('/users', [AdminUserController::class, 'store'])->name('users.store');
         Route::delete('/users/{user}', [AdminUserController::class, 'destroy'])->name('users.destroy');
 
-        /*
-        |--------------------------------------------------------------------------
-        | ADMIN ORDERS
-        |--------------------------------------------------------------------------
-        */
+        // Admin orders
         Route::get('/orders', [AdminOrderController::class, 'index'])->name('orders.index');
         Route::get('/orders/{order}', [AdminOrderController::class, 'show'])->name('orders.show');
 
-        // ✅ status actions
-        Route::patch('/orders/{order}/mark-paid', [AdminOrderController::class, 'markPaid'])
-            ->name('orders.markPaid');
+        // Status actions
+        Route::patch('/orders/{order}/mark-paid', [AdminOrderController::class, 'markPaid'])->name('orders.markPaid');
+        Route::patch('/orders/{order}/mark-completed', [AdminOrderController::class, 'markCompleted'])->name('orders.markCompleted');
+        Route::patch('/orders/{order}/mark-cancelled', [AdminOrderController::class, 'markCancelled'])->name('orders.markCancelled');
 
-        Route::patch('/orders/{order}/mark-completed', [AdminOrderController::class, 'markCompleted'])
-            ->name('orders.markCompleted');
+        // ✅ Admin Profile page
+        Route::get('/profile', [\App\Http\Controllers\Admin\AdminProfileController::class, 'index'])
+            ->name('profile');
 
-        Route::patch('/orders/{order}/mark-cancelled', [AdminOrderController::class, 'markCancelled'])
-            ->name('orders.markCancelled');
+        Route::post('/profile/password', [\App\Http\Controllers\Admin\AdminProfileController::class, 'updatePassword'])
+            ->name('profile.password');
+
+        Route::post('/profile/2fa/enable', [\App\Http\Controllers\Admin\AdminProfileController::class, 'enable2fa'])
+            ->name('profile.2fa.enable');
+
+        Route::post('/profile/2fa/disable', [\App\Http\Controllers\Admin\AdminProfileController::class, 'disable2fa'])
+            ->name('profile.2fa.disable');
     });

@@ -295,6 +295,38 @@
             @endif
         </div>
 
+        <!-- 2 Step verification on off-->
+        <div class="mt-6 border-t pt-6">
+            <p class="text-sm font-semibold mb-2">2-Step Verification (Email OTP)</p>
+
+            @php $enabled = auth()->user()->two_factor_enabled; @endphp
+
+            @if($enabled)
+                <div class="text-sm text-green-700 bg-green-50 border border-green-200 rounded-xl p-3">
+                    ✅ 2-step verification is ON
+                </div>
+
+                <form method="POST" action="{{ route('2fa.disable') }}" class="mt-3">
+                    @csrf
+                    <button class="w-full bg-gray-900 hover:bg-black text-white font-semibold py-3 rounded-xl">
+                        Turn OFF
+                    </button>
+                </form>
+            @else
+                <div class="text-sm text-gray-700 bg-gray-50 border rounded-xl p-3">
+                    Add extra protection: we send a code to your email during login.
+                </div>
+
+                <form method="POST" action="{{ route('2fa.enable') }}" class="mt-3">
+                    @csrf
+                    <button class="w-full bg-gray-900 hover:bg-black text-white font-semibold py-3 rounded-xl">
+                        Turn ON
+                    </button>
+                </form>
+            @endif
+        </div>
+
+
         <!-- Suggestions -->
         <div class="bg-white border rounded-2xl shadow-sm p-6">
             <h2 class="text-lg font-bold">Recommended Next Steps</h2>

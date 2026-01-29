@@ -60,9 +60,9 @@
 
                     <!-- Admin button - only for admin -->
                     @if(auth()->user()->is_admin)
-                        <a href="{{ route('admin.dashboard') }}"
-                        class="bg-gray-900 text-white px-3 py-2 rounded-md">
-                            Admin
+                        <a href="{{ route('admin.profile') }}"
+                        class="px-4 py-2 rounded-xl bg-gray-900 text-white hover:bg-gray-800">
+                        Admin
                         </a>
                     @endif
                     <!-- Profile pic -->

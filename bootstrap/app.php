@@ -12,11 +12,13 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        $middleware->alias([
-            'admin' => \App\Http\Middleware\AdminMiddleware::class,
-        ]);
-    })
 
+        $middleware->alias([
+            'admin'    => \App\Http\Middleware\AdminMiddleware::class,
+            'email2fa' => \App\Http\Middleware\EnsureEmailOtp2faVerified::class,
+        ]);
+
+    })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
     })->create();

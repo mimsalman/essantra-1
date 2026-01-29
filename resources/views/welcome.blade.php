@@ -83,10 +83,6 @@
                             Create an account
                         </a>
                     </div>
-
-                    <p class="text-xs text-white/70 mt-4">
-                        Tip: Login to review perfumes and track your activity.
-                    </p>
                 </div>
             </div>
 
