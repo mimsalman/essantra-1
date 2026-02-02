@@ -54,7 +54,7 @@
                             </svg>
 
                             @if(collect(session('cart', []))->sum('qty') > 0)
-                                <livewire:cart-counter />
+                                <livewire:volt.cart-counter />
                             @endif
                         </a>
                     @endif

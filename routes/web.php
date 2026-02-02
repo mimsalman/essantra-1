@@ -17,6 +17,8 @@ use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Admin\AdminOrderController;
 use App\Http\Controllers\Admin\AdminProfileController;
 
+use Livewire\Volt\Volt;
+
 /*
 |--------------------------------------------------------------------------
 | HOME
@@ -48,16 +50,16 @@ Route::get('/shop/{perfume}', [ShopController::class, 'show'])->name('shop.show'
 
 
 /*
-|--------------------------------------------------------------------------
-| AUTH USER ROUTES
-|--------------------------------------------------------------------------
+--------------------------------------------------------------------------
+ AUTH USER ROUTES
+--------------------------------------------------------------------------
 */
 Route::middleware(['auth'])->group(function () {
 
     /*
-    |--------------------------------------------------------------------------
-    | USER DASHBOARD
-    |--------------------------------------------------------------------------
+    --------------------------------------------------------------------------
+     USER DASHBOARD
+    --------------------------------------------------------------------------
     */
     Route::get('/dashboard', function () {
         $user = auth()->user();
@@ -145,3 +147,6 @@ Route::middleware(['auth', 'admin'])
         Route::patch('/orders/{order}/mark-completed', [AdminOrderController::class, 'markCompleted'])->name('orders.markCompleted');
         Route::patch('/orders/{order}/mark-cancelled', [AdminOrderController::class, 'markCancelled'])->name('orders.markCancelled');
     });
+
+
+Volt::route('/volt/cart-counter', 'cart-counter');

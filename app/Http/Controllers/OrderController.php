@@ -101,7 +101,7 @@ class OrderController extends Controller
             session()->forget('cart');
         });
 
-        // ✅ send email AFTER the transaction succeeded
+        //  send email AFTER the transaction succeeded
         if ($order && $order->user) {
             $order->user->notify(new OrderPlaced($order));
         }

@@ -7,7 +7,7 @@
 @php
     $user = auth()->user();
 
-    // ✅ Jetstream correct accessor
+    // Jetstream 
     $photoUrl = $user->profile_photo_url ?? null;
 
     $initial = strtoupper(substr($user->name ?? 'U', 0, 1));
@@ -101,7 +101,7 @@
     <!-- Left -->
     <div class="lg:col-span-4 space-y-6">
 
-        <!-- ✅ Profile Card (CLOSED properly now) -->
+        <!-- Profile Card -->
         <div class="bg-white border rounded-2xl shadow-sm p-6">
             <h2 class="text-lg font-bold">Profile</h2>
 

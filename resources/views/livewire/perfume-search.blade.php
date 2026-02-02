@@ -5,7 +5,7 @@
         <div class="flex flex-col sm:flex-row gap-2 sm:items-center">
             <input
                 type="text"
-                wire:model.debounce.300ms="q"
+                wire:model.live="q"
                 placeholder="Search perfumes..."
                 class="border rounded px-3 py-2 w-full sm:w-64"
             />

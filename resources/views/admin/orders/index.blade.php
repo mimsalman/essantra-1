@@ -14,6 +14,7 @@
         <!--<div class="absolute inset-0 bg-white/20"></div>-->
     </div>
 
+<!-- Heading -->
 <div class="flex items-center justify-between mb-6">
     <h1 class="text-4xl font-bold text-white">Admin: Orders</h1>
 </div>

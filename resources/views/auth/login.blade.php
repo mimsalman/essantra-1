@@ -80,14 +80,14 @@
                                     <div>
                                         <label class="text-sm font-semibold text-white/80">Email</label>
                                         <input type="email" name="email" value="{{ old('email') }}" required autofocus
-                                               class="mt-2 w-full rounded-xl px-4 py-3 bg-white/18 text-white placeholder-white/60 border border-white/25 focus:outline-none focus:ring-2 focus:ring-white/50"
+                                               class="mt-2 w-full rounded-xl px-4 py-3 bg-white/18 text-balck placeholder-white/60 border border-white/25 focus:outline-none focus:ring-2 focus:ring-white/50"
                                                placeholder="you@example.com">
                                     </div>
 
                                     <div>
                                         <label class="text-sm font-semibold text-white/80">Password</label>
                                         <input type="password" name="password" required
-                                               class="mt-2 w-full rounded-xl px-4 py-3 bg-white/18 text-white placeholder-white/60 border border-white/25 focus:outline-none focus:ring-2 focus:ring-white/50"
+                                               class="mt-2 w-full rounded-xl px-4 py-3 bg-white/18 text-black placeholder-white/60 border border-white/25 focus:outline-none focus:ring-2 focus:ring-white/50"
                                                placeholder="••••••••">
                                     </div>
 
